@@ -6,7 +6,30 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+# config for Zipkin
 management:
   tracing:
     sampling:
       probability: 1.0
+
+
+# config for db
+db:
+  username: postgres
+  password: 123456789
+  schema: transaction_data
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${db.schema}
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  sql:
+    init:
+      platform: postgres
