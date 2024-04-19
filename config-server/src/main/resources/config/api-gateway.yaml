@@ -11,3 +11,16 @@ management:
   tracing:
     sampling:
       probability: 1.0
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/transaction/**
+        - id: currency-service
+          uri: lb://currency-service
+          predicates:
+            - Path=/api/currency/**
