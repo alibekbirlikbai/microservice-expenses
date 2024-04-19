@@ -1,5 +1,6 @@
 package com.example.transactionservice.model;
 
+import com.example.transactionservice.model.utils.LongToStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Component;
@@ -12,22 +13,11 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @Column
-    private String content;
+    @Convert(converter = LongToStringConverter.class)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private long account_from;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    @Convert(converter = LongToStringConverter.class)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private long account_to;
 }
