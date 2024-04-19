@@ -19,6 +19,7 @@ public class TransactionServiceImplement implements TransactionService {
     @Override
     public Transaction save(Transaction transaction) {
         ServiceUtils.validateAccountNumbersLength(transaction);
+        ServiceUtils.roundTransactionSum(transaction.getSum());
         return repository.save(transaction);
     }
 }

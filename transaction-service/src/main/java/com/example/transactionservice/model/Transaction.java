@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 @Entity
 @Getter @Setter @NoArgsConstructor
@@ -20,4 +22,10 @@ public class Transaction {
     @Convert(converter = LongToStringConverter.class)
     @Column(columnDefinition = "VARCHAR(10)")
     private long account_to;
+
+    @Column
+    private String currency_shortname;
+
+    @Column
+    private BigDecimal sum;
 }
