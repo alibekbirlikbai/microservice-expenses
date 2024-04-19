@@ -28,4 +28,10 @@ public class Transaction {
 
     @Column
     private BigDecimal sum;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ExpenseCategory expense_category;
+
+
 }
