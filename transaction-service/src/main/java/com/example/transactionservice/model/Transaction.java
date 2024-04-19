@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 
 @Component
 @Entity
@@ -33,5 +34,6 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private ExpenseCategory expense_category;
 
-
+    @Column
+    private ZonedDateTime datetime;
 }

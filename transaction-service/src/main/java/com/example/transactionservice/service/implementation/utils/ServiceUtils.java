@@ -1,7 +1,6 @@
 package com.example.transactionservice.service.implementation.utils;
 
 import com.example.transactionservice.model.Transaction;
-
 import java.math.BigDecimal;
 
 public class ServiceUtils {
@@ -12,7 +11,8 @@ public class ServiceUtils {
         }
     }
 
-    public static BigDecimal roundTransactionSum(BigDecimal value) {
-        return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+    public static void roundTransactionSum(Transaction transaction) {
+        BigDecimal value = transaction.getSum();
+        value.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }
