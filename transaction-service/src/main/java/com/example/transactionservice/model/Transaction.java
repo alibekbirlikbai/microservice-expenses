@@ -36,4 +36,7 @@ public class Transaction {
 
     @Column
     private ZonedDateTime datetime;
+
+    @Column
+    private boolean limit_exceeded;
 }
