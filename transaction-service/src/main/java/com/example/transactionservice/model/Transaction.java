@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 
 @Component
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @ToString
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
