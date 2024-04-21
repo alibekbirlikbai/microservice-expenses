@@ -41,11 +41,13 @@ public class TransactionServiceImplement implements TransactionService {
         if (!limitService.hasRecords()) {
             // Лимит по умолчанию (1000.00)
             limit = limitService.setDefaultLimit(transaction);
-//            System.out.println("limit.sum=" + limit.getLimit_sum() + " + limit.dateTime=" + limit.getLimit_datetime());
-//            System.out.println("transaction.sum=" + transaction.getSum() + " + transaction.dateTime=" + transaction.getDatetime());
         } else {
             /// Лимит Клиента
+//            System.out.println(limitService.getRelevantLimits());
         }
+
+//            System.out.println("limit.sum=" + limit.getLimit_sum() + " + limit.dateTime=" + limit.getLimit_datetime());
+//            System.out.println("transaction.sum=" + transaction.getSum() + " + transaction.dateTime=" + transaction.getDatetime());
 
         transaction.setLimit_exceeded(checkTransactionForExceed(transaction, limit));
 
@@ -67,8 +69,8 @@ public class TransactionServiceImplement implements TransactionService {
     @Override
     public boolean checkTransactionForExceed(Transaction transaction, Limit limit) {
         BigDecimal limitSumLeft = limitService.calculateLimitSumLeft(transaction, limit);
-//        System.out.println(limitSumLeft);
 
+        // Если limitSumLeft отрицательный или 0.0, то лимит был превышен
         if (limitSumLeft.compareTo(BigDecimal.ZERO) < 0) {
             return true;
         }

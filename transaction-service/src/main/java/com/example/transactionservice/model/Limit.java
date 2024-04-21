@@ -27,7 +27,4 @@ public class Limit {
     @Column
     @Enumerated(EnumType.STRING)
     private ExpenseCategory expense_category;
-
-//    @Column
-//    private BigDecimal limit_sum_remain;
 }

@@ -24,4 +24,8 @@ public class ServiceUtils {
     public static ZonedDateTime getStartOfNextMonthDateTime(ZonedDateTime limitStartDate) {
         return limitStartDate.plusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
     }
+
+    public static ZonedDateTime getCurrentDateTime() {
+        return ZonedDateTime.now();
+    }
 }

@@ -6,11 +6,12 @@ import com.example.transactionservice.model.Transaction;
 import com.example.transactionservice.repository.LimitRepo;
 import com.example.transactionservice.service.LimitService;
 import com.example.transactionservice.service.TransactionService;
-import com.example.transactionservice.service.implement.utils.LimitServiceUtils;
 import com.example.transactionservice.service.implement.utils.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -22,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +52,15 @@ public class LimitServiceImplement implements LimitService {
         limit.setLimit_datetime(ServiceUtils.getStartOfMonthDateTime(transaction.getDatetime()));
         limit.setExpense_category(transaction.getExpense_category());
         return limit;
+    }
+
+    @Override
+    public Limit setClientLimit(Limit limit) {
+        // Обновлять существующие лимиты запрещается;
+        checkLimitForExist(limit);
+
+        limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
+        return repository.save(limit);
     }
 
     @Override
@@ -91,6 +102,30 @@ public class LimitServiceImplement implements LimitService {
         }
 
         return remainingLimit;
+    }
+
+    @Override
+    public boolean checkLimitForExist(Limit limit) {
+        if (limit.getId() > 0 && repository.existsById(limit.getId())) {
+            throw new IllegalArgumentException("Limit already exists!!!");
+        }
+        return false;
+    }
+
+    @Override
+    public Map<ExpenseCategory, Limit> latestLimitsForCategories() {
+        Map<ExpenseCategory, Limit> latestLimits = new HashMap<>();
+
+        for (ExpenseCategory category : ExpenseCategory.values()) {
+            // Получаем последнюю запись для каждой ExpenseCategory из бд
+            Limit latestLimit = repository.findTopByExpenseCategoryOrderByLimitDatetimeDesc(category);
+
+            if (latestLimit != null) {
+                latestLimits.put(category, latestLimit);
+            }
+        }
+
+        return latestLimits;
     }
 
 }
