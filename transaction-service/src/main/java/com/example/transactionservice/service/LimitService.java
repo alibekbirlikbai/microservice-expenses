@@ -15,7 +15,7 @@ public interface LimitService {
     Limit setClientLimit(Limit limit);
     boolean checkLimitForExist(Limit limit);
     BigDecimal calculateLimitSumLeft(Transaction transaction, Limit limit);
-    BigDecimal getSumOfLimitsForMonth(Transaction transaction);
-    List<Limit> getClientLimitListForMonth(ZonedDateTime dateTime);
     Map<ExpenseCategory, Limit> getLatestLimitsForCategories();
+    List<Limit> getAllLimits();
+    Limit getLimitForTransaction(Transaction transaction);
 }

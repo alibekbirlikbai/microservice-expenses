@@ -3,11 +3,15 @@ package com.example.transactionservice.service.implement;
 import com.example.transactionservice.model.ExpenseCategory;
 import com.example.transactionservice.model.Limit;
 import com.example.transactionservice.model.Transaction;
+import com.example.transactionservice.model.dto.ExceededTransactionDTO;
 import com.example.transactionservice.repository.TransactionRepo;
 import com.example.transactionservice.service.LimitService;
 import com.example.transactionservice.service.TransactionService;
 import com.example.transactionservice.service.implement.utils.ServiceUtils;
 import com.example.transactionservice.service.implement.utils.TransactionServiceUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,15 +21,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 public class TransactionServiceImplement implements TransactionService {
     private TransactionRepo repository;
     private LimitService limitService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public TransactionServiceImplement(TransactionRepo repository,
@@ -88,5 +94,31 @@ public class TransactionServiceImplement implements TransactionService {
             return true;
         }
         return false;
+    }
+
+
+    @Override
+    public List<ExceededTransactionDTO> getAllExceededTransactions() {
+        // Получаем все транзакции, которые превысили лимиты
+        List<Transaction> exceededTransactions = repository.findByLimit_exceededTrue();
+
+        // Создаем список DTO для превышенных транзакций
+        List<ExceededTransactionDTO> exceededTransactionDTOs = new ArrayList<>();
+
+        // Проходим по каждой превышенной транзакции
+        for (Transaction transaction : exceededTransactions) {
+            // Получаем лимит для данной транзакции
+            Limit limit = limitService.getLimitForTransaction(transaction);
+
+            // Создаем DTO и устанавливаем транзакцию и соответствующий лимит
+            ExceededTransactionDTO dto = new ExceededTransactionDTO();
+            dto.setTransaction(transaction);
+            dto.setLimit(limit);
+
+            // Добавляем DTO в список
+            exceededTransactionDTOs.add(dto);
+        }
+
+        return exceededTransactionDTOs;
     }
 }

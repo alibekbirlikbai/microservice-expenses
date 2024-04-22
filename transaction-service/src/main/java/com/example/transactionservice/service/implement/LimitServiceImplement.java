@@ -94,31 +94,6 @@ public class LimitServiceImplement implements LimitService {
     }
 
     @Override
-    public BigDecimal getSumOfLimitsForMonth(Transaction transaction) {
-        List<Limit> limitsForMonth = getClientLimitListForMonth(transaction.getDatetime());
-        BigDecimal sumOfLimits = BigDecimal.ZERO;
-        for (Limit limit : limitsForMonth) {
-            // Учитываем только лимиты, установленные до даты установки нового лимита
-            if (!limit.getLimit_datetime().isAfter(getLatestLimitsForCategories().get(transaction.getExpense_category()).getLimit_datetime())) {
-                sumOfLimits = sumOfLimits.add(limit.getLimit_sum());
-            }
-        }
-        return sumOfLimits;
-    }
-
-    @Override
-    public List<Limit> getClientLimitListForMonth(ZonedDateTime dateTime) {
-        // Определяем начальную и конечную даты текущего месяца
-        ZonedDateTime firstDayOfMonth = ServiceUtils.getStartOfMonthDateTime(dateTime);
-        ZonedDateTime lastDayOfMonth = ServiceUtils.getEndOfMonthDateTime(dateTime);
-
-        // Получаем все транзакции клиента за месяц
-        List<Limit> limits = repository.findByLimit_datetimeBetween(
-                firstDayOfMonth, lastDayOfMonth);
-        return limits;
-    }
-
-    @Override
     public boolean checkLimitForExist(Limit limit) {
         if (limit.getId() > 0 && repository.existsById(limit.getId())) {
             throw new IllegalArgumentException("Limit already exists!!!");
@@ -140,6 +115,34 @@ public class LimitServiceImplement implements LimitService {
             }
         }
         return latestLimits;
+    }
+
+    @Override
+    public List<Limit> getAllLimits() {
+        return (List<Limit>) repository.findAll();
+    }
+
+    @Override
+    public Limit getLimitForTransaction(Transaction transaction) {
+        // Получаем дату и время совершения транзакции
+        ZonedDateTime transactionDateTime = transaction.getDatetime();
+
+        // Получаем все лимиты для данной категории расходов, отсортированные по дате установления лимита в убывающем порядке
+        List<Limit> limits = repository.findByExpense_categoryOrderByLimit_datetimeDesc(transaction.getExpense_category());
+
+        // Находим первый лимит, установленный до даты и времени транзакции
+        Limit limitForTransaction = limits.stream()
+                .filter(limit -> limit.getLimit_datetime().isBefore(transactionDateTime))
+                .findFirst()
+                .orElse(null);
+
+        if (limitForTransaction != null) {
+            // Если лимит найден, возвращаем его
+            return limitForTransaction;
+        } else {
+            // Если лимит не найден, возвращаем лимит по умолчанию
+            return setDefaultLimit(transaction);
+        }
     }
 
 }

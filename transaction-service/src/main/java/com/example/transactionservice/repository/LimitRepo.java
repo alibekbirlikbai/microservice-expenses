@@ -16,10 +16,11 @@ public interface LimitRepo extends CrudRepository<Limit, Long> {
     @Query("SELECT l FROM Limit l WHERE l.expense_category = :category ORDER BY l.limit_datetime DESC")
     List<Limit> findTopByExpenseCategoryOrderByLimitDatetimeDesc(ExpenseCategory category);
 
-    //    @Query("SELECT l FROM Limit l WHERE l.expense_category = :expenseCategory")
-    //    Limit findByExpense_category(ExpenseCategory expenseCategory);
-
     @Query("SELECT l FROM Limit l WHERE l.limit_datetime BETWEEN :firstDayOfMonth AND :lastDayOfMonth")
     List<Limit> findByLimit_datetimeBetween(@Param("firstDayOfMonth") ZonedDateTime firstDayOfMonth,
                                             @Param("lastDayOfMonth") ZonedDateTime lastDayOfMonth);
+
+    @Query("SELECT l FROM Limit l WHERE l.expense_category = :expenseCategory ORDER BY l.limit_datetime DESC")
+    List<Limit> findByExpense_categoryOrderByLimit_datetimeDesc(ExpenseCategory expenseCategory);
+
 }
