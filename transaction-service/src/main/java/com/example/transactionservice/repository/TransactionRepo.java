@@ -10,6 +10,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
-public interface TransactionRepo extends CrudRepository<Transaction, Long>  {
+public interface TransactionRepo extends CrudRepository<Transaction, Long> {
     List<Transaction> findByDatetimeBetween(ZonedDateTime firstDayOfMonth, ZonedDateTime lastDayOfMonth);
 }

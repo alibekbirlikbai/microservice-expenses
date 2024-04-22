@@ -59,39 +59,29 @@ public class LimitServiceImplement implements LimitService {
         // Обновлять существующие лимиты запрещается;
         checkLimitForExist(limit);
 
-        limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
+//        limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
         return repository.save(limit);
     }
 
     @Override
     public BigDecimal calculateLimitSumLeft(Transaction transaction, Limit limit) {
         ZonedDateTime limitStartDate = limit.getLimit_datetime();
-        ZonedDateTime nextMonthStart = ServiceUtils.getStartOfNextMonthDateTime(limitStartDate);
         ZonedDateTime transactionDateTime = transaction.getDatetime();
         ExpenseCategory transactionCategory = transaction.getExpense_category();
 
-        // Получаем месяц у переданной транзакции
-        int transactionMonth = transactionDateTime.getMonthValue();
-        int limitMonth = limitStartDate.getMonthValue();
-
-        /* Если месяц у переданной транзакции отличается от месяца установки лимита,
-         обновляем лимит на начало нового месяца */
-        if (transactionMonth != limitMonth) {
-            limitStartDate = ZonedDateTime.of(transactionDateTime.getYear(), transactionMonth, 1, 0, 0, 0, 0, transactionDateTime.getZone());
-            nextMonthStart = ServiceUtils.getStartOfNextMonthDateTime(limitStartDate);
+        // Обновляем лимит на начало месяца транзакции, если она произошла после установления лимита
+        if (transactionDateTime.isAfter(limitStartDate)) {
+            limitStartDate = ZonedDateTime.of(transactionDateTime.getYear(), transactionDateTime.getMonthValue(), 1, 0, 0, 0, 0, transactionDateTime.getZone());
         }
 
         // Получаем все транзакции клиента за месяц
         List<Transaction> transactions = transactionService.getClientTransactionListForMonth(transactionDateTime);
         transactions.add(transaction);
 
-        /* Фильтруем транзакции, которые произошли после установления лимита
-        но до начала следующего месяца, и соответствуют той же категории расходов */
+        // Фильтруем транзакции, которые произошли после установления лимита в текущем месяце
         ZonedDateTime finalLimitStartDate = limitStartDate;
-        ZonedDateTime finalNextMonthStart = nextMonthStart;
         List<Transaction> relevantTransactions = transactions.stream()
                 .filter(t -> t.getDatetime().isAfter(finalLimitStartDate))
-                .filter(t -> !t.getDatetime().isAfter(finalNextMonthStart))
                 .filter(t -> t.getExpense_category() == transactionCategory) // Учитываем категорию расходов
                 .collect(Collectors.toList());
 
@@ -100,8 +90,32 @@ public class LimitServiceImplement implements LimitService {
         for (Transaction t : relevantTransactions) {
             remainingLimit = remainingLimit.subtract(t.getSum());
         }
-
         return remainingLimit;
+    }
+
+    @Override
+    public BigDecimal getSumOfLimitsForMonth(Transaction transaction) {
+        List<Limit> limitsForMonth = getClientLimitListForMonth(transaction.getDatetime());
+        BigDecimal sumOfLimits = BigDecimal.ZERO;
+        for (Limit limit : limitsForMonth) {
+            // Учитываем только лимиты, установленные до даты установки нового лимита
+            if (!limit.getLimit_datetime().isAfter(getLatestLimitsForCategories().get(transaction.getExpense_category()).getLimit_datetime())) {
+                sumOfLimits = sumOfLimits.add(limit.getLimit_sum());
+            }
+        }
+        return sumOfLimits;
+    }
+
+    @Override
+    public List<Limit> getClientLimitListForMonth(ZonedDateTime dateTime) {
+        // Определяем начальную и конечную даты текущего месяца
+        ZonedDateTime firstDayOfMonth = ServiceUtils.getStartOfMonthDateTime(dateTime);
+        ZonedDateTime lastDayOfMonth = ServiceUtils.getEndOfMonthDateTime(dateTime);
+
+        // Получаем все транзакции клиента за месяц
+        List<Limit> limits = repository.findByLimit_datetimeBetween(
+                firstDayOfMonth, lastDayOfMonth);
+        return limits;
     }
 
     @Override
@@ -113,18 +127,18 @@ public class LimitServiceImplement implements LimitService {
     }
 
     @Override
-    public Map<ExpenseCategory, Limit> latestLimitsForCategories() {
+    public Map<ExpenseCategory, Limit> getLatestLimitsForCategories() {
         Map<ExpenseCategory, Limit> latestLimits = new HashMap<>();
 
         for (ExpenseCategory category : ExpenseCategory.values()) {
-            // Получаем последнюю запись для каждой ExpenseCategory из бд
-            Limit latestLimit = repository.findTopByExpenseCategoryOrderByLimitDatetimeDesc(category);
+            // Получаем список последних записей для каждой категории из базы данных
+            List<Limit> limits = repository.findTopByExpenseCategoryOrderByLimitDatetimeDesc(category);
 
-            if (latestLimit != null) {
-                latestLimits.put(category, latestLimit);
+            // Если список не пуст и содержит элементы, добавляем первый элемент (самую последнюю запись) в карту
+            if (!limits.isEmpty()) {
+                latestLimits.put(category, limits.get(0));
             }
         }
-
         return latestLimits;
     }
 

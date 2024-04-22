@@ -5,6 +5,7 @@ import com.example.transactionservice.model.Limit;
 import com.example.transactionservice.model.Transaction;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -14,5 +15,7 @@ public interface LimitService {
     Limit setClientLimit(Limit limit);
     boolean checkLimitForExist(Limit limit);
     BigDecimal calculateLimitSumLeft(Transaction transaction, Limit limit);
-    Map<ExpenseCategory, Limit> latestLimitsForCategories();
+    BigDecimal getSumOfLimitsForMonth(Transaction transaction);
+    List<Limit> getClientLimitListForMonth(ZonedDateTime dateTime);
+    Map<ExpenseCategory, Limit> getLatestLimitsForCategories();
 }
