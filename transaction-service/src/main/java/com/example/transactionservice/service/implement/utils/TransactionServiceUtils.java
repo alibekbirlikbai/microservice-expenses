@@ -11,7 +11,7 @@ public class TransactionServiceUtils {
         ServiceUtils.roundToHundredth(transaction.getSum());
 
         // Это если для проверки логики сохранения
-        // transaction.setDatetime(ServiceUtils.getCurrentDateTime());
+//         transaction.setDatetime(ServiceUtils.getCurrentDateTime());
     }
 
     private static void validateAccountNumbersLength(Transaction transaction) {

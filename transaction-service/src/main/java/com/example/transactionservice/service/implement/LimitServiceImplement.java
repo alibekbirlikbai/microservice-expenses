@@ -52,6 +52,7 @@ public class LimitServiceImplement implements LimitService {
     @Override
     public Limit setDefaultLimit(Transaction transaction) {
         Limit limit = new Limit();
+        limit.setId(0);
         limit.setLimit_currency_shortname("USD");
         limit.setLimit_sum(BigDecimal.valueOf(1000.00));
         limit.setLimit_datetime(ServiceUtils.getStartOfMonthDateTime(transaction.getDatetime()));
