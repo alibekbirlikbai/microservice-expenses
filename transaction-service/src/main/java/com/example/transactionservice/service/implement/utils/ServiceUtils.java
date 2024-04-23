@@ -1,7 +1,10 @@
 package com.example.transactionservice.service.implement.utils;
 
+import com.example.transactionservice.model.ExpenseCategory;
+
 import java.math.BigDecimal;
 import java.time.*;
+import java.util.Map;
 
 public class ServiceUtils {
     public static BigDecimal roundToHundredth(BigDecimal value) {
@@ -21,11 +24,19 @@ public class ServiceUtils {
         return lastDayOfMonth;
     }
 
-    public static ZonedDateTime getStartOfNextMonthDateTime(ZonedDateTime limitStartDate) {
-        return limitStartDate.plusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
+    public static ExpenseCategory parseExpenseCategory(Map<String, Object> map, String key) {
+        String expenseCategoryString = (String) map.get(key);
+        if (expenseCategoryString != null) {
+            return ExpenseCategory.valueOf(expenseCategoryString.toUpperCase());
+        }
+        return null;
     }
 
-    public static ZonedDateTime getCurrentDateTime() {
-        return ZonedDateTime.now();
+    public static ZonedDateTime parseDateTime(Map<String, Object> map, String key) {
+        Instant instant = (Instant) map.get(key);
+        if (instant != null) {
+            return ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+        }
+        return null;
     }
 }

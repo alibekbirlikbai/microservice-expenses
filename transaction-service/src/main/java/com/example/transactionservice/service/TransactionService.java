@@ -12,5 +12,6 @@ public interface TransactionService {
     Transaction save(Transaction transaction);
     List<Transaction> getClientTransactionListForMonth(ZonedDateTime transactionDateTime);
     boolean checkTransactionForExceed(Transaction transaction, Limit limit);
-    List<ExceededTransactionDTO> getAllExceededTransactions();
+    List<ExceededTransactionDTO> getAllExceededTransactions_Java();
+    List<ExceededTransactionDTO> getAllExceededTransactions_SQL();
 }

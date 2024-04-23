@@ -39,8 +39,13 @@ public class ClientController {
         return limitService.getAllLimits();
     }
 
-    @GetMapping("/transactions/exceeded")
-    public List<ExceededTransactionDTO> getTransactionsExceeded() {
-        return transactionService.getAllExceededTransactions();
+    @GetMapping("/transactions/exceeded/java-code")
+    public List<ExceededTransactionDTO> getTransactionsExceeded_Java() {
+        return transactionService.getAllExceededTransactions_Java();
+    }
+
+    @GetMapping("/transactions/exceeded/sql-query")
+    public List<ExceededTransactionDTO> getTransactionsExceeded_SQL() {
+        return transactionService.getAllExceededTransactions_SQL();
     }
 }
