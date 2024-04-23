@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @Component
 @Entity
 @Getter @Setter @NoArgsConstructor @ToString
-public class Transaction {
+public class Transaction implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
@@ -39,4 +39,16 @@ public class Transaction {
 
     @Column
     private boolean limit_exceeded;
+
+    @Override
+    public Transaction clone() {
+        try {
+            Transaction clonedTransaction = (Transaction) super.clone();
+            // Глубокое клонирование BigDecimal
+            clonedTransaction.setSum(new BigDecimal(this.sum.toString()));
+            return clonedTransaction;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
 }

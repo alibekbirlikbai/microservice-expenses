@@ -42,12 +42,12 @@ public class TransactionServiceImplement implements TransactionService {
 
     @Override
     public Transaction save(Transaction transaction) {
-        TransactionServiceUtils.validateAccountNumbersLength(transaction);
-        ServiceUtils.roundToHundredth(transaction.getSum());
+        TransactionServiceUtils.validateTransactionData(transaction);
 
         Limit limit = new Limit();
         if (limitService.hasRecords()) {
             Map<ExpenseCategory, Limit> latestLimits = limitService.getLatestLimitsForCategories();
+
             // Проверяем, соответствует ли ExpenseCategory транзакции одной из категорий в возвращаемой Map
             Limit limitForTransactionCategory = latestLimits.get(transaction.getExpense_category());
 
@@ -81,12 +81,23 @@ public class TransactionServiceImplement implements TransactionService {
         // Получаем все транзакции клиента за месяц
         List<Transaction> transactions = repository.findByDatetimeBetween(
                 firstDayOfMonth, lastDayOfMonth);
+
+        // Создаем копии транзакций, чтобы изменения применялись только к копиям
+        List<Transaction> transactionCopyList = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            Transaction transactionCopy = transaction.clone();
+            transactionCopyList.add(transactionCopy.clone());
+        }
         return transactions;
     }
 
     @Override
     public boolean checkTransactionForExceed(Transaction transaction, Limit limit) {
-        BigDecimal limitSumLeft = limitService.calculateLimitSumLeft(transaction, limit);
+        /* Чтобы не сохранять конвертированный (в USD) вариант как сумму для текущей транзакции,
+         * при расчете limitSumLeft передаем в нее копию  */
+        Transaction transactionCopy = transaction.clone();
+
+        BigDecimal limitSumLeft = limitService.calculateLimitSumLeft(transactionCopy, limit);
 
         // Если limitSumLeft отрицательный или 0.0, то лимит был превышен
         if (limitSumLeft.compareTo(BigDecimal.ZERO) < 0) {

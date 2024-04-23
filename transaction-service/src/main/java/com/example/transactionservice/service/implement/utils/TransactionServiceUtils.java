@@ -6,7 +6,15 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 public class TransactionServiceUtils {
-    public static void validateAccountNumbersLength(Transaction transaction) {
+    public static void validateTransactionData(Transaction transaction) {
+        validateAccountNumbersLength(transaction);
+        ServiceUtils.roundToHundredth(transaction.getSum());
+
+        // Это если для проверки логики сохранения
+        // transaction.setDatetime(ServiceUtils.getCurrentDateTime());
+    }
+
+    private static void validateAccountNumbersLength(Transaction transaction) {
         if (String.valueOf(transaction.getAccount_from()).length()  > 10 ||
                 String.valueOf(transaction.getAccount_to()).length()  > 10) {
             throw new IllegalArgumentException("Account number must be exactly 10 digits!!! (Not saved)");

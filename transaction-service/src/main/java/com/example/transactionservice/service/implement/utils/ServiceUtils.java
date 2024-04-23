@@ -24,6 +24,10 @@ public class ServiceUtils {
         return lastDayOfMonth;
     }
 
+    public static ZonedDateTime getCurrentDateTime() {
+        return ZonedDateTime.now();
+    }
+
     public static ExpenseCategory parseExpenseCategory(Map<String, Object> map, String key) {
         String expenseCategoryString = (String) map.get(key);
         if (expenseCategoryString != null) {

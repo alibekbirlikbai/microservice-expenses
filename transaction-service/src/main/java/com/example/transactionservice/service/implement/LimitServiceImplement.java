@@ -4,9 +4,11 @@ import com.example.transactionservice.model.ExpenseCategory;
 import com.example.transactionservice.model.Limit;
 import com.example.transactionservice.model.Transaction;
 import com.example.transactionservice.repository.LimitRepo;
+import com.example.transactionservice.service.CurrencyService;
 import com.example.transactionservice.service.LimitService;
 import com.example.transactionservice.service.TransactionService;
 import com.example.transactionservice.service.implement.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -30,12 +32,15 @@ import java.util.stream.Collectors;
 public class LimitServiceImplement implements LimitService {
     private LimitRepo repository;
     private TransactionService transactionService;
+    private CurrencyService currencyService;
 
     @Autowired
     public LimitServiceImplement(LimitRepo repository,
-                                 @Lazy TransactionService transactionService) {
+                                 @Lazy TransactionService transactionService,
+                                 @Lazy CurrencyService currencyService) {
         this.repository = repository;
         this.transactionService = transactionService;
+        this.currencyService = currencyService;
     }
 
 
@@ -56,15 +61,26 @@ public class LimitServiceImplement implements LimitService {
 
     @Override
     public Limit setClientLimit(Limit limit) {
-        // Обновлять существующие лимиты запрещается;
+        // Обновлять существующие лимиты запрещается
         checkLimitForExist(limit);
 
-//        limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
+        /* автоматически выставляется текущая дата,
+        * не позволяя выставить ее в прошедшем или будущем времени */
+        limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
+
+        // Лимит всегда USD
+        limit.setLimit_currency_shortname("USD");
         return repository.save(limit);
     }
 
     @Override
     public BigDecimal calculateLimitSumLeft(Transaction transaction, Limit limit) {
+        // Конвертируем сумму транзакции в USD
+        System.out.print("Transaction: " + transaction.getSum() + " " + transaction.getCurrency_shortname() + " -> ");
+        BigDecimal transactionSumInUSD = currencyService.convertToUSD(transaction.getSum(), transaction.getCurrency_shortname());
+        System.out.println("in USD:" + transactionSumInUSD);
+
+
         ZonedDateTime limitStartDate = limit.getLimit_datetime();
         ZonedDateTime transactionDateTime = transaction.getDatetime();
         ExpenseCategory transactionCategory = transaction.getExpense_category();
@@ -83,6 +99,11 @@ public class LimitServiceImplement implements LimitService {
         List<Transaction> relevantTransactions = transactions.stream()
                 .filter(t -> t.getDatetime().isAfter(finalLimitStartDate))
                 .filter(t -> t.getExpense_category() == transactionCategory) // Учитываем категорию расходов
+                .map(t -> {
+                    Transaction transactionCopy = t.clone();
+                    transactionCopy.setSum(currencyService.convertToUSD(t.getSum(), t.getCurrency_shortname())); // Конвертируем сумму транзакции в USD
+                    return transactionCopy;
+                })
                 .collect(Collectors.toList());
 
         // Вычисляем остаток лимита
@@ -90,6 +111,7 @@ public class LimitServiceImplement implements LimitService {
         for (Transaction t : relevantTransactions) {
             remainingLimit = remainingLimit.subtract(t.getSum());
         }
+        System.out.println("remainingLimit: " + remainingLimit);
         return remainingLimit;
     }
 
