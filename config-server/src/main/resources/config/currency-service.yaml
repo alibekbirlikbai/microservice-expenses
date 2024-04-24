@@ -33,9 +33,9 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     database: POSTGRESQL
-    show-sql: true
+#    show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   sql:
     init:
       platform: postgres

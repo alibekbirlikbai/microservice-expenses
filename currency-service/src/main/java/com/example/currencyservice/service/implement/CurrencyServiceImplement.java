@@ -3,6 +3,9 @@ package com.example.currencyservice.service.implement;
 import com.example.currencyservice.external.OpenExchangeRatesClient;
 import com.example.currencyservice.model.CurrencyApiResponse;
 import com.example.currencyservice.model.Currency;
+import com.example.currencyservice.model.dto.CurrencyRequest;
+import com.example.currencyservice.repository.CurrencyRepository;
+import com.example.currencyservice.repository.CurrencyRequestRepository;
 import com.example.currencyservice.service.CurrencyService;
 import com.example.currencyservice.service.implement.utils.CurrencyServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +23,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class CurrencyServiceImplement implements CurrencyService {
-//    private CurrencyRepository currencyRepository;
-//    private CurrencyApiResponseRepository responseRepository;
+    private CurrencyRepository currencyRepository;
+    private CurrencyRequestRepository requestRepository;
     private final OpenExchangeRatesClient openExchangeRatesClient;
 
     private List<Currency> currencyList = new ArrayList<>();
-    private Mono<CurrencyApiResponse> apiResponseMono = Mono.empty();
 
     @Autowired
-//    public CurrencyServiceImplement(CurrencyRepository currencyRepository, CurrencyApiResponseRepository responseRepository, OpenExchangeRatesClient openExchangeRatesClient) {
-//        this.currencyRepository = currencyRepository;
-//        this.responseRepository = responseRepository;
-//        this.openExchangeRatesClient = openExchangeRatesClient;
-//    }
+    public CurrencyServiceImplement(CurrencyRepository currencyRepository, CurrencyRequestRepository requestRepository, OpenExchangeRatesClient openExchangeRatesClient) {
+        this.currencyRepository = currencyRepository;
+        this.requestRepository = requestRepository;
+        this.openExchangeRatesClient = openExchangeRatesClient;
+    }
 
     public CurrencyServiceImplement(OpenExchangeRatesClient openExchangeRatesClient) {
         this.openExchangeRatesClient = openExchangeRatesClient;
@@ -69,34 +71,69 @@ public class CurrencyServiceImplement implements CurrencyService {
     @Override
     public Mono<List<Currency>> createCurrenciesFromResponse(Mono<CurrencyApiResponse> responseMono) {
         return responseMono.flatMap(response -> {
+            CurrencyRequest currencyRequest = getCurrencyRequest(response);
+            requestRepository.save(currencyRequest);
+
             // Получаем список валют и сохраняем их в бд
             Map<String, BigDecimal> currencyRates = response.getRates();
-            List<Currency> currencies = new ArrayList<>();
+            currencyList = new ArrayList<>();
             for (Map.Entry<String, BigDecimal> entry : currencyRates.entrySet()) {
                 Currency currency = new Currency();
                 currency.setCurrency_shortname(entry.getKey());
                 currency.setRate_to_USD(entry.getValue());
-                currencies.add(currency);
+//                currency.setCurrencyRequest(currencyRequest);
+                currencyList.add(currency);
             }
-            return Mono.just(currencies);
+            currencyList.forEach(currency -> currency.setCurrencyRequest(currencyRequest));
+            currencyRepository.saveAll(currencyList);
+            return Mono.just(currencyList);
         });
+    }
+
+//    @Override
+//    public void saveRequestInDataBase(List<Currency> currencyList, CurrencyRequest currencyRequest) {
+//        currencyRequest.setCurrencyList(currencyList);
+//        currencyRepository.saveAll(currencyList);
+//        requestRepository.save(currencyRequest);
+//    }
+//
+//    @Override
+//    public CurrencyRequest getOrCreateCurrencyRequest(CurrencyApiResponse response) {
+//        String base = response.getBase();
+//        String timestamp = response.getTimestamp();
+//
+//        // Проверяем существует ли уже объект CurrencyRequest с такими параметрами
+//        CurrencyRequest currencyRequest = requestRepository.findByBaseAndFormatted_timestamp(base, timestamp);
+//        if (currencyRequest == null) {
+//            currencyRequest = new CurrencyRequest();
+//            currencyRequest.setBase(base);
+//            currencyRequest.setFormatted_timestamp(timestamp);
+//        }
+//
+//        return currencyRequest;
+//    }
+//    @Override
+    public CurrencyRequest getCurrencyRequest(CurrencyApiResponse response) {
+        CurrencyRequest currencyRequest = new CurrencyRequest();
+        currencyRequest.setBase(response.getBase());
+        currencyRequest.setFormatted_timestamp(response.getTimestamp());
+        return currencyRequest;
     }
 
 
 
-//    @Override
-//    public Mono<String> test() {
-//        return openExchangeRatesClient.test()
-//                .map(response -> {
-//                    if (response.contains("Example Domain")) {
-//                        // Request to example.com was successful
-//                        return "Requested data from example.com";
-//                    } else {
-//                        // Request to example.com failed or returned unexpected content
-//                        return "Failed to get data from example.com";
-//                    }
-//                });
-//    }
+
+
+    @Override
+    public List<CurrencyRequest> getPastRequestList() {
+        return (List<CurrencyRequest>) requestRepository.findAll();
+    }
+
+    @Override
+    public List<Currency> getPastCurrencyList() {
+        return (List<Currency>) currencyRepository.findAll();
+    }
+
 
 
 }

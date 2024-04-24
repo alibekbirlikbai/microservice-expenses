@@ -2,6 +2,7 @@ package com.example.currencyservice.controller;
 
 import com.example.currencyservice.model.Currency;
 import com.example.currencyservice.model.CurrencyApiResponse;
+import com.example.currencyservice.model.dto.CurrencyRequest;
 import com.example.currencyservice.service.CurrencyService;
 import com.example.currencyservice.service.implement.CurrencyServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,15 @@ public class CurrencyController {
         return service.getCurrencyList(dateTime);
     }
 
-//    @GetMapping("/test")
-//    public Mono<String> test() {
-//        return service.test();
-//    }
+
+    @GetMapping("/service/requests")
+    public List<CurrencyRequest> getPastRequestList() {
+        return service.getPastRequestList();
+    }
+
+    @GetMapping("/service/currencies")
+    public List<Currency> getPastCurrencyList() {
+        return service.getPastCurrencyList();
+    }
+
 }
