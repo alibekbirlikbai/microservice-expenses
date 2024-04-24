@@ -22,7 +22,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/{dateTime}")
-    public Mono<CurrencyApiResponse> getCurrencyList(@PathVariable ZonedDateTime dateTime) {
+    public Mono<List<Currency>> getCurrencyList(@PathVariable ZonedDateTime dateTime) {
         return service.getCurrencyList(dateTime);
     }
 

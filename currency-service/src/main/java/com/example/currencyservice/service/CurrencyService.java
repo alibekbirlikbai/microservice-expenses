@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface CurrencyService {
-    Mono<CurrencyApiResponse> getCurrencyList(ZonedDateTime dateTime);
+    Mono<List<Currency>> getCurrencyList(ZonedDateTime dateTime);
+    Mono<List<Currency>> createCurrenciesFromResponse(Mono<CurrencyApiResponse> responseMono);
 //    Mono<String> test();
 }
