@@ -1,20 +1,13 @@
 package com.example.currencyservice.service;
 
 import com.example.currencyservice.model.Currency;
-import com.example.currencyservice.repository.CurrencyRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.currencyservice.model.CurrencyApiResponse;
+import reactor.core.publisher.Mono;
 
-@Service
-public class CurrencyService {
-    private CurrencyRepo repository;
+import java.time.ZonedDateTime;
+import java.util.List;
 
-    @Autowired
-    public CurrencyService(CurrencyRepo repository) {
-        this.repository = repository;
-    }
-
-    public Currency save(Currency currency) {
-        return repository.save(currency);
-    }
+public interface CurrencyService {
+    Mono<CurrencyApiResponse> getCurrencyList(ZonedDateTime dateTime);
+//    Mono<String> test();
 }

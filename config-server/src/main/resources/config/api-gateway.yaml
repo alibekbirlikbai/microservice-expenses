@@ -1,3 +1,4 @@
+### ------- Конфигурация Проекта ------- ###
 server:
   port: 8060
 
@@ -12,15 +13,19 @@ management:
     sampling:
       probability: 1.0
 
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: transaction-service
-          uri: lb://transaction-service
-          predicates:
-            - Path=/api/transaction/**
-        - id: currency-service
-          uri: lb://currency-service
-          predicates:
-            - Path=/api/currency/**
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: transaction-service
+#          uri: lb://transaction-service
+#          predicates:
+#            - Path=/api/client/**
+#        - id: transaction-service
+#          uri: lb://transaction-service
+#          predicates:
+#            - Path=/api/transaction-management/**
+#        - id: currency-service
+#          uri: lb://currency-service
+#          predicates:
+#            - Path=/api/currency-management/**

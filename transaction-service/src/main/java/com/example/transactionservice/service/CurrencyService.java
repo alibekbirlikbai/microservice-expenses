@@ -1,13 +1,8 @@
-package com.example.transactionservice.service;
-
-import com.example.transactionservice.model.Currency;
+package com.example.transactionservice.external.service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
 
 public interface CurrencyService {
-    Map<String, BigDecimal> getListOfCurrency(List<Currency> currencyList);
-    BigDecimal convertToUSD(BigDecimal amount, String currency);
-    List<Currency> fetchCurrencies();
+    BigDecimal convertToUSD(String currency_shortname, BigDecimal transaction_sum, ZonedDateTime transaction_dateTime);
 }
