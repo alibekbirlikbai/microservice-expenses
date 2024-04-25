@@ -49,8 +49,8 @@ public class CurrencyServiceImplement implements CurrencyService {
 
         CurrencyRequest pastCurrencyRequest = requestRepository.findByFormatted_timestamp(transactionDate_formatted);
         if (pastCurrencyRequest != null) {
-            currencyList = getPastCurrencyList_byRequestID(pastCurrencyRequest.getId());
-            return Mono.just(currencyList);
+            currencyList = currencyRepository.findAllByCurrencyRequestID(pastCurrencyRequest.getId());
+            return checkForUnavailableRate(transaction_dateTime, currencyList);
         } else {
             return Mono.defer(() -> {
                 if (parsedTransactionDate.isEqual(parsedCurrentDate)) {
@@ -59,14 +59,16 @@ public class CurrencyServiceImplement implements CurrencyService {
                                 response.setTimestamp(currentDate_formatted);
                                 return response;
                             })
-                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
+                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)))
+                            .flatMap(currencyList -> checkForUnavailableRate(transaction_dateTime, currencyList));
                 } else if (parsedTransactionDate.isBefore(parsedCurrentDate)) {
                     return openExchangeRatesClient.getCurrencyList_Historical(transactionDate_formatted)
                             .map(response -> {
                                 response.setTimestamp(transactionDate_formatted);
                                 return response;
                             })
-                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
+                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)))
+                            .flatMap(currencyList -> checkForUnavailableRate(transaction_dateTime, currencyList));
                 } else {
                     return Mono.error(new IllegalArgumentException("Transaction date cannot be in the future!!! (BACK-TO-THE-FUTURE)"));
                 }
@@ -103,7 +105,27 @@ public class CurrencyServiceImplement implements CurrencyService {
         return currencyRequest;
     }
 
-
+    /* это немного условная реализация требования из ТЗ (пункт 3) ("использовать данные последнего закрытия (previous_close)")
+     * потому что у меня free-plan от https://openexchangerates.org/api/,
+     * но в документации говорится что для '/historical/*.json' + '/latest.json'
+     * в качестве rates фактический берутся данные последнего закрытия,
+     * а значит что если запрос (или запись из локальной БД) будет пустой
+     * мы можем сделать еще один запрос (или взять данные из локальной БД)
+     * на предыдущий день
+     *      '/latest.json'=(The latest rates will always be the most up-to-date data available on your plan)
+     *      '/historical/*.json'=(The historical rates returned are the last values we published for a given UTC day)  */
+    @Override
+    public Mono<List<Currency>> checkForUnavailableRate(ZonedDateTime transaction_dateTime, List<Currency> currencyList) {
+        /* Если currencyList пустой, вызываем getCurrencyList на предыдущий день,
+         * и так по рекурсии, пока не найдется доступный курс */
+        if (currencyList.isEmpty()) {
+            ZonedDateTime previousDate = transaction_dateTime.minusDays(1);
+            return getCurrencyList(previousDate);
+        } else {
+            // Если currencyList не пустой, просто возвращаем значение
+            return Mono.just(currencyList);
+        }
+    }
 
 
 
@@ -116,11 +138,5 @@ public class CurrencyServiceImplement implements CurrencyService {
     public List<Currency> getPastCurrencyList() {
         return (List<Currency>) currencyRepository.findAll();
     }
-
-    public List<Currency> getPastCurrencyList_byRequestID(long request_id) {
-        return currencyRepository.findAllByCurrencyRequestID(request_id);
-    }
-
-
 
 }
