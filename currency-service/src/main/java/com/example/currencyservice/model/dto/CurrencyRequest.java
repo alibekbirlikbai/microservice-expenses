@@ -22,7 +22,7 @@ public class CurrencyRequest {
     @Column
     private String base;
 
-    @Column
+    @Column(unique = true)
     private String formatted_timestamp;
 
     @OneToMany(

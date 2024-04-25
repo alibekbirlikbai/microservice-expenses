@@ -11,9 +11,7 @@ import java.util.List;
 public interface CurrencyService {
     Mono<List<Currency>> getCurrencyList(ZonedDateTime dateTime);
     Mono<List<Currency>> createCurrenciesFromResponse(Mono<CurrencyApiResponse> responseMono);
-//    void saveRequestInDataBase(List<Currency> currencyList, CurrencyRequest currencyRequest);
-//    CurrencyRequest getOrCreateCurrencyRequest(CurrencyApiResponse response);
-//    CurrencyRequest getCurrencyRequest(List<Currency> currencyList, CurrencyApiResponse response);
+    CurrencyRequest getCurrencyRequest(CurrencyApiResponse response);
 
     List<CurrencyRequest> getPastRequestList();
     List<Currency> getPastCurrencyList();

@@ -47,25 +47,31 @@ public class CurrencyServiceImplement implements CurrencyService {
         LocalDate parsedCurrentDate = LocalDate.parse(currentDate_formatted);
         LocalDate parsedTransactionDate = LocalDate.parse(transactionDate_formatted);
 
-        return Mono.defer(() -> {
-            if (parsedTransactionDate.isEqual(parsedCurrentDate)) {
-                return openExchangeRatesClient.getCurrencyList_Latest()
-                        .map(response -> {
-                            response.setTimestamp(currentDate_formatted);
-                            return response;
-                        })
-                        .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
-            } else if (parsedTransactionDate.isBefore(parsedCurrentDate)) {
-                return openExchangeRatesClient.getCurrencyList_Historical(transactionDate_formatted)
-                        .map(response -> {
-                            response.setTimestamp(transactionDate_formatted);
-                            return response;
-                        })
-                        .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
-            } else {
-                return Mono.error(new IllegalArgumentException("Transaction date cannot be in the future!!! (BACK-TO-THE-FUTURE)"));
-            }
-        });
+        CurrencyRequest pastCurrencyRequest = requestRepository.findByFormatted_timestamp(transactionDate_formatted);
+        if (pastCurrencyRequest != null) {
+            currencyList = getPastCurrencyList_byRequestID(pastCurrencyRequest.getId());
+            return Mono.just(currencyList);
+        } else {
+            return Mono.defer(() -> {
+                if (parsedTransactionDate.isEqual(parsedCurrentDate)) {
+                    return openExchangeRatesClient.getCurrencyList_Latest()
+                            .map(response -> {
+                                response.setTimestamp(currentDate_formatted);
+                                return response;
+                            })
+                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
+                } else if (parsedTransactionDate.isBefore(parsedCurrentDate)) {
+                    return openExchangeRatesClient.getCurrencyList_Historical(transactionDate_formatted)
+                            .map(response -> {
+                                response.setTimestamp(transactionDate_formatted);
+                                return response;
+                            })
+                            .flatMap(response -> createCurrenciesFromResponse(Mono.just(response)));
+                } else {
+                    return Mono.error(new IllegalArgumentException("Transaction date cannot be in the future!!! (BACK-TO-THE-FUTURE)"));
+                }
+            });
+        }
     }
 
     @Override
@@ -81,7 +87,6 @@ public class CurrencyServiceImplement implements CurrencyService {
                 Currency currency = new Currency();
                 currency.setCurrency_shortname(entry.getKey());
                 currency.setRate_to_USD(entry.getValue());
-//                currency.setCurrencyRequest(currencyRequest);
                 currencyList.add(currency);
             }
             currencyList.forEach(currency -> currency.setCurrencyRequest(currencyRequest));
@@ -90,29 +95,7 @@ public class CurrencyServiceImplement implements CurrencyService {
         });
     }
 
-//    @Override
-//    public void saveRequestInDataBase(List<Currency> currencyList, CurrencyRequest currencyRequest) {
-//        currencyRequest.setCurrencyList(currencyList);
-//        currencyRepository.saveAll(currencyList);
-//        requestRepository.save(currencyRequest);
-//    }
-//
-//    @Override
-//    public CurrencyRequest getOrCreateCurrencyRequest(CurrencyApiResponse response) {
-//        String base = response.getBase();
-//        String timestamp = response.getTimestamp();
-//
-//        // Проверяем существует ли уже объект CurrencyRequest с такими параметрами
-//        CurrencyRequest currencyRequest = requestRepository.findByBaseAndFormatted_timestamp(base, timestamp);
-//        if (currencyRequest == null) {
-//            currencyRequest = new CurrencyRequest();
-//            currencyRequest.setBase(base);
-//            currencyRequest.setFormatted_timestamp(timestamp);
-//        }
-//
-//        return currencyRequest;
-//    }
-//    @Override
+    @Override
     public CurrencyRequest getCurrencyRequest(CurrencyApiResponse response) {
         CurrencyRequest currencyRequest = new CurrencyRequest();
         currencyRequest.setBase(response.getBase());
@@ -132,6 +115,10 @@ public class CurrencyServiceImplement implements CurrencyService {
     @Override
     public List<Currency> getPastCurrencyList() {
         return (List<Currency>) currencyRepository.findAll();
+    }
+
+    public List<Currency> getPastCurrencyList_byRequestID(long request_id) {
+        return currencyRepository.findAllByCurrencyRequestID(request_id);
     }
 
 
