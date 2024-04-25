@@ -8,24 +8,15 @@ import com.example.transactionservice.service.CurrencyService;
 import com.example.transactionservice.service.LimitService;
 import com.example.transactionservice.service.TransactionService;
 import com.example.transactionservice.service.implement.utils.ServiceUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,9 +67,9 @@ public class LimitServiceImplement implements LimitService {
 
     @Override
     public BigDecimal calculateLimitSumLeft(Transaction transaction, Limit limit) {
-        // Конвертируем сумму транзакции в USD
+        // (Это просто Лог) не используется в логике
         System.out.print("Transaction: " + transaction.getSum() + " " + transaction.getCurrency_shortname() + " -> ");
-        BigDecimal transactionSumInUSD = currencyService.convertToUSD(transaction.getSum(), transaction.getCurrency_shortname());
+        BigDecimal transactionSumInUSD = currencyService.convertToUSD(transaction.getCurrency_shortname(), transaction.getSum(), transaction.getDatetime());
         System.out.println("in USD:" + transactionSumInUSD);
 
 
@@ -102,7 +93,9 @@ public class LimitServiceImplement implements LimitService {
                 .filter(t -> t.getExpense_category() == transactionCategory) // Учитываем категорию расходов
                 .map(t -> {
                     Transaction transactionCopy = t.clone();
-                    transactionCopy.setSum(currencyService.convertToUSD(t.getSum(), t.getCurrency_shortname())); // Конвертируем сумму транзакции в USD
+
+                    // Конвертируем сумму транзакции в USD
+                    transactionCopy.setSum(currencyService.convertToUSD(t.getCurrency_shortname(), t.getSum(), t.getDatetime())); // Конвертируем сумму транзакции в USD
                     return transactionCopy;
                 })
                 .collect(Collectors.toList());

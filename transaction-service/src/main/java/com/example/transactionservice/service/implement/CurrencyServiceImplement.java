@@ -1,9 +1,13 @@
-package com.example.transactionservice.external.service.implement;
+package com.example.transactionservice.service.implement;
 
+import com.example.transactionservice.external.CurrencyServiceClient;
 import com.example.transactionservice.model.Currency;
-import com.example.transactionservice.external.service.CurrencyService;
-import com.example.transactionservice.external.service.implement.utils.CurrencyServiceUtils;
+import com.example.transactionservice.model.utils.CurrencyRequest;
+import com.example.transactionservice.service.CurrencyService;
+import jakarta.persistence.Id;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,14 +16,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CurrencyServiceImplement implements CurrencyService {
-    private Map<String, BigDecimal> currencyRates;
+    private final CurrencyServiceClient currencyServiceClient;
+
+    @Autowired
+    public CurrencyServiceImplement(CurrencyServiceClient currencyServiceClient) {
+        this.currencyServiceClient = currencyServiceClient;
+    }
+
+
     @Override
     public BigDecimal convertToUSD(String currency_shortname, BigDecimal transaction_sum, ZonedDateTime transaction_dateTime) {
-        // Получаем список валют и их курсов
-        Map<String, BigDecimal> currencyMap = getListOfCurrency(fetchCurrencies(transaction_dateTime));
+        // Получаем список валют и их курсов (из API currency-service)
+        List<Currency> currencyList = fetchCurrencyList(transaction_dateTime).block();
+        Map<String, BigDecimal> currencyMap = getListOfCurrency(currencyList);
 
         // Проверяем, есть ли указанная валюта в списке
         if (!currencyMap.containsKey(currency_shortname)) {
@@ -33,32 +46,45 @@ public class CurrencyServiceImplement implements CurrencyService {
         return transaction_sum.divide(exchangeRate, 2, RoundingMode.HALF_UP);
     }
 
+    @Override
     public Map<String, BigDecimal> getListOfCurrency(List<Currency> currencyList) {
-        // Инициализируем карту валют и их курсов к USD
-        currencyRates = new HashMap<>();
-
+        Map<String, BigDecimal> currencyRatesMap = new HashMap<>();
         // Добавляем все валюты и их курсы к USD из списка currencyList
         for (Currency currency : currencyList) {
-            currencyRates.put(currency.getCurrency_shortname(), currency.getRate_to_USD());
+            currencyRatesMap.put(currency.getCurrency_shortname(), currency.getRate_to_USD());
         }
 
-        return currencyRates;
+        return currencyRatesMap;
     }
 
-    public List<Currency> fetchCurrencies(ZonedDateTime transaction_dateTime) {
-        String dateTime = CurrencyServiceUtils.validateDateTimeToAPI(transaction_dateTime);
 
-
-
-
+    /* на этом методе происходит связь с другим сервисом проекта
+     * (сервисом currency-service, через CurrencyServiceClient) */
+    @Override
+    public Mono<List<Currency>> fetchCurrencyList(ZonedDateTime transaction_dateTime) {
         List<Currency> currencyList = new ArrayList<>();
+        return currencyServiceClient.getCurrencyList(transaction_dateTime)
+                .doOnNext(response -> {
+                    // Преобразование и добавление в currencyList
+                    List<Currency> returnedCurrencies = response.stream()
+                            .map(currency -> {
+                                Currency newCurrency = new Currency();
+                                newCurrency.setCurrency_shortname(currency.getCurrency_shortname());
+                                newCurrency.setRate_to_USD(currency.getRate_to_USD());
 
-        // Добавляем значения для валют и их курсов в список
-        // TEST currencyList
-//        currencyList.add(new Currency("USD", BigDecimal.ONE));
-//        currencyList.add(new Currency("KZT", BigDecimal.valueOf(400))); // Примерный курс KZT к USD
-//        currencyList.add(new Currency("RUB", BigDecimal.valueOf(70))); // Примерный курс RUB к USD
+                                CurrencyRequest newCurrencyRequest = new CurrencyRequest();
+                                newCurrencyRequest.setBase(currency.getCurrencyRequest().getBase());
+                                newCurrencyRequest.setFormatted_timestamp(currency.getCurrencyRequest().getFormatted_timestamp());
 
-        return currencyList;
+                                newCurrency.setCurrencyRequest(newCurrencyRequest);
+
+                                return newCurrency;
+                            })
+                            .collect(Collectors.toList());
+
+                    currencyList.addAll(returnedCurrencies);
+
+                    System.out.println("- Data from currencyList (IN):" + currencyList);
+                });
     }
 }
