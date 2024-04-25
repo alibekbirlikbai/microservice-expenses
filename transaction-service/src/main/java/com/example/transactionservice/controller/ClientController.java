@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/transaction-service/api/client")
 public class ClientController {
     private LimitService limitService;
     private TransactionService transactionService;

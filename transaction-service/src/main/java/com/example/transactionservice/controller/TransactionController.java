@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/transaction-management")
+@RequestMapping("/transaction-service/api/transactions")
 public class TransactionController {
     private TransactionService transactionService;
 
@@ -22,7 +22,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/transactions")
+    @PostMapping
     public ResponseEntity<?> saveTransaction(@RequestBody Transaction transaction) {
         try {
             transactionService.save(transaction);

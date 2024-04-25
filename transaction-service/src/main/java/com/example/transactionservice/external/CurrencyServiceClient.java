@@ -31,7 +31,7 @@ public class CurrencyServiceClient {
                         uriBuilder.scheme("http")
                                 .host("localhost")
                                 .port(8082)
-                                .path("/api/currency-management/" + dateTime)
+                                .path("/currency-service/api/currencies/" + dateTime)
                                 .build())
                 .retrieve()
                 .bodyToFlux(Currency.class)  // Преобразуем ответ в поток объектов Currency

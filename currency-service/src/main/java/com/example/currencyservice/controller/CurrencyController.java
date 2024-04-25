@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/currency-management")
+@RequestMapping("/currency-service/api/currencies")
 public class CurrencyController {
     private CurrencyService service;
 
@@ -28,12 +28,12 @@ public class CurrencyController {
     }
 
 
-    @GetMapping("/service/requests")
+    @GetMapping("/requests")
     public List<CurrencyRequest> getPastRequestList() {
         return service.getPastRequestList();
     }
 
-    @GetMapping("/service/currencies")
+    @GetMapping
     public List<Currency> getPastCurrencyList() {
         return service.getPastCurrencyList();
     }
