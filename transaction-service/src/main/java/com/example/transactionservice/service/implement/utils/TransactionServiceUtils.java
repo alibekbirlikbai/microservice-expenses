@@ -3,6 +3,7 @@ package com.example.transactionservice.service.implement.utils;
 import com.example.transactionservice.model.Limit;
 import com.example.transactionservice.model.Transaction;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class TransactionServiceUtils {
@@ -10,8 +11,12 @@ public class TransactionServiceUtils {
         validateAccountNumbersLength(transaction);
         ServiceUtils.roundToHundredth(transaction.getSum());
 
-        // Это если для проверки логики сохранения
-//         transaction.setDatetime(ServiceUtils.getCurrentDateTime());
+        /* Это если для проверки логики сохранения,
+         * для проверки логики по условию ТЗ, нужно закомментировать
+         * (тогда можно будет выставлять дату транзакции вручную) */
+         transaction.setDatetime(ServiceUtils.getCurrentDateTime());
+        System.out.println(transaction.getDatetime());
+//         transaction.setDatetime(ServiceUtils.getTruncatedCurrentDateTime());
     }
 
     private static void validateAccountNumbersLength(Transaction transaction) {

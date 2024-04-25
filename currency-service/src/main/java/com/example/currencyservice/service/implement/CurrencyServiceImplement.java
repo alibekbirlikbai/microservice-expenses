@@ -36,10 +36,6 @@ public class CurrencyServiceImplement implements CurrencyService {
         this.openExchangeRatesClient = openExchangeRatesClient;
     }
 
-    public CurrencyServiceImplement(OpenExchangeRatesClient openExchangeRatesClient) {
-        this.openExchangeRatesClient = openExchangeRatesClient;
-    }
-
     @Override
     public Mono<List<Currency>> getCurrencyList(ZonedDateTime transaction_dateTime) {
         String currentDate_formatted = CurrencyServiceUtils.parseZoneDateTime(CurrencyServiceUtils.getCurrentDateTime());
@@ -49,6 +45,9 @@ public class CurrencyServiceImplement implements CurrencyService {
 
         CurrencyRequest pastCurrencyRequest = requestRepository.findByFormatted_timestamp(transactionDate_formatted);
         if (pastCurrencyRequest != null) {
+            System.out.println("Get data from local db!!! (currencyList at:" + pastCurrencyRequest.getFormatted_timestamp() + ")");
+
+            // Список валют взят из БД (запрос в openexchangerates.org/api/ НЕ делается)
             currencyList = currencyRepository.findAllByCurrencyRequestID(pastCurrencyRequest.getId());
             return checkForUnavailableRate(transaction_dateTime, currencyList);
         } else {

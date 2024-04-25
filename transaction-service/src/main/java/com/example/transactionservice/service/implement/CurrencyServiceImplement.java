@@ -81,10 +81,7 @@ public class CurrencyServiceImplement implements CurrencyService {
                                 return newCurrency;
                             })
                             .collect(Collectors.toList());
-
                     currencyList.addAll(returnedCurrencies);
-
-                    System.out.println("- Data from currencyList (IN):" + currencyList);
                 });
     }
 }

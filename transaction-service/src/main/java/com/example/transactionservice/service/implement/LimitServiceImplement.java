@@ -59,6 +59,7 @@ public class LimitServiceImplement implements LimitService {
         /* автоматически выставляется текущая дата,
         * не позволяя выставить ее в прошедшем или будущем времени */
         limit.setLimit_datetime(ServiceUtils.getCurrentDateTime());
+//        limit.setLimit_datetime(ServiceUtils.getTruncatedCurrentDateTime());
 
         // Лимит всегда USD
         limit.setLimit_currency_shortname("USD");

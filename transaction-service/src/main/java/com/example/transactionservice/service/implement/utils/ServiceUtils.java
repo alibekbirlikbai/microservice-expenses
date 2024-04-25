@@ -4,7 +4,11 @@ import com.example.transactionservice.model.ExpenseCategory;
 
 import java.math.BigDecimal;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.Objects;
 
 public class ServiceUtils {
     public static BigDecimal roundToHundredth(BigDecimal value) {
@@ -25,7 +29,8 @@ public class ServiceUtils {
     }
 
     public static ZonedDateTime getCurrentDateTime() {
-        return ZonedDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
+        return now.withZoneSameLocal(now.getOffset());
     }
 
     public static ExpenseCategory parseExpenseCategory(Map<String, Object> map, String key) {
