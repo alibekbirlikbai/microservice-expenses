@@ -70,7 +70,7 @@
 <div align="justify"> 
   
 - [x] [п.1] <span id="task-1" align="justify">Получать информацию о каждой расходной операции в тенге (KZT), рублях (RUB) и других валютах в реальном времени и сохранять ее в своей собственной базе данных (БД);</span>
-  - _**Сохранение получаемой "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-1-implement-transaction) [(Git commit)](https://github.com/alibekbirlikbai/microservice-expenses/commit/9b4c4576de5eb7ac72dbac92aad2e05892b01d53)_
+  - _**Сохранение получаемой "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-1-implement-transaction) [(Git commit)](https://github.com/alibekbirlikbai/microservice-expenses/commit/b8ae197a1ce6ba4f88faf18e27cbf82403465bc5)_
 
 
 - [x] [п.2] <span id="task-2" align="justify">Хранить месячный лимит по расходам в долларах США (USD) раздельно для двух категорий расходов: товаров и услуг. Если не установлен, принимать лимит равным 1000 USD;</span>
