@@ -70,57 +70,57 @@
 <div align="justify"> 
   
 - [x] [п.1] <span id="task-1" align="justify">Получать информацию о каждой расходной операции в тенге (KZT), рублях (RUB) и других валютах в реальном времени и сохранять ее в своей собственной базе данных (БД);</span>
-  - _**Сохранение получаемой "Транзакции"** [(описание Кода)](#task-1-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Сохранение получаемой "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-1-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
 
 
 - [x] [п.2] <span id="task-2" align="justify">Хранить месячный лимит по расходам в долларах США (USD) раздельно для двух категорий расходов: товаров и услуг. Если не установлен, принимать лимит равным 1000 USD;</span>
 
-  - _**Реализовать логику разделение "Транзакций" по категориям расходов** [(описание Кода)](#task-2_implement_transaction) [(Git commit)](ааааааааааааааааааааааа)_
-  - _**Реализовать логику установления "Лимита" по-умолчанию** [(описание Кода)](#task-3-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать логику разделение "Транзакций" по категориям расходов** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-2_implement_transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать логику установления "Лимита" по-умолчанию** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-3-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
 
 
 - [x] [п.3] <span id="task-3" align="justify">Запрашивать данные биржевых курсов валютных пар KZT/USD, RUB/USD по дневному интервалу (1day/daily) и хранить их в собственной базе данных. При расчете курсов использовать данные закрытия (close). В случае, если таковые недоступны на текущий день (выходной или праздничный день), то использовать данные последнего закрытия (previous_close);</span>
 
-  - _**Установить соединение с `Внешним API`** [(описание Кода)](#task-1-implement_currency) [(Git commit)](ааааааааааааааааааааааа)_
-  - _**Запрашивать "курсы валют" к USD** [(описание Кода)](#task-1-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
-  - _**Обработать полученные валюты от `Внешнего API`** [(описание Кода)](#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_  
-  - _**Реализовать логику получения "курсов валют" последнего закрытия** [(описание Кода)](#task-3-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Установить соединение с `Внешним API`** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-1-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Запрашивать "курсы валют" к USD** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-1-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Обработать полученные валюты от `Внешнего API`** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_  
+  - _**Реализовать логику получения "курсов валют" последнего закрытия** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-3-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
     > если **_"Транзакция"_** совершена в выходной или праздничный день
   - _**[--Доп. features--]:**_
       - [x] [п.3.1] <span id="task-3" align="justify">Рассчитывать сумму расходов в USD нужно по биржевому курсу на день расхода или по последнему курсу закрытия. За каждый запрос внешних данных нужно платить, и, к тому же, на выполнение внешнего запроса тратится дополнительное время. В связи с этим, полученные обменные курсы валют нужно хранить в своей базе данных и преимущественно использовать их;</span>
           > **Info:** Данные биржевых торгов получать из внешнего источника данных (<a href="https://twelvedata.com/docs#time-series">twelvedata.com</a>, <a href="https://www.alphavantage.co/">alphavantage.co</a>, <a href="https://docs.openexchangerates.org/reference/convert">openexchangerates.org</a> или из другого по своему усмотрению. 
       
-        - _**Сохранение полученных "курсов валют" на определенную дату в `локальном БД`** [(описание Кода)](#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
-        - _**Реализовать логику проверки наличия "курсов валют" на определенную дату в `локальном БД`** [(описание Кода)](#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
+        - _**Сохранение полученных "курсов валют" на определенную дату в `локальном БД`** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
+        - _**Реализовать логику проверки наличия "курсов валют" на определенную дату в `локальном БД`** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-2-implement-currency) [(Git commit)](ааааааааааааааааааааааа)_
           > при следующей **_"Транзакция"_** на тот же день, данные будут взяты из БД, запрос не будет оправляться на внешний API если они уже есть в БД
 
 
 - [x] [п.4] <span id="task-4" align="justify">Помечать транзакции, превысившие месячный лимит операций (технический флаг limit_exceeded);</span>
 
-  - _**Реализовать логику выставления флага `limit_exceeded` для "Транзакции"** [(описание Кода)](#task_4-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
-  - _**Реализовать логику конвертации валюты "Транзакций"** [(описание Кода)](#task-5-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать логику выставления флага `limit_exceeded` для "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task_4-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать логику конвертации валюты "Транзакций"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-5-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
     > это логика должна учитываться при вычислении `Остатка месячного лимита`
-  - _**Реализовать обращение к `currency-service` для получения списка валют на дату совершения "Транзакции"** [(описание Кода)](#task-6-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать обращение к `currency-service` для получения списка валют на дату совершения "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-6-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
 
   - _**[--Доп. features--]:**_
       - [x] [п.4.1] <span id="task-3" align="justify">Последний лимит не должен влиять на выставление флага limit_exceeded транзакциям, совершенным ранее установления последнего лимита;</span>
         > **Info:** Иными словами, если лимит, установленный 1.01.2022 в размере 1000 USD, превышен двумя транзакциями на суммы 500 и 600 USD, то второй транзакции должен быть выставлен флаг limit_exceeded = true. Если пользователь установил новый лимит 11.01.2022, и выполнил третью транзакцию 12.01.2022 на сумму 100 USD, она должна иметь флаг limit_exceeded = false.
       
-        - _**Реализовать логику определения соответствующего "Лимита" для "Транзакции"** [(описание Кода)](#task-4-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+        - _**Реализовать логику определения соответствующего "Лимита" для "Транзакции"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-4-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
 
 
 - [x] [п.5] <span id="task-5" align="justify">Дать возможность клиенту установить новый лимит. При установлении нового лимита микросервисом автоматически выставляется текущая дата, не позволяя выставить ее в прошедшем или будущем времени. Обновлять существующие лимиты запрещается;</span>
 
-  - _**Реализовать функцию установления "Лимита" Клиентом** [(описание Кода)](#task-7-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать функцию установления "Лимита" Клиентом** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-7-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
 
 
 - [x] [п.6] <span id="task-6" align="justify">По запросу клиента возвращать список транзакций, превысивших лимит, с указанием лимита, который был превышен (дата установления, сумма лимита, валюта (USD));</span>
 
-  - _**Реализовать функцию получения "Транзакции", которые перевесили свой "Лимит"** [(описание Кода)](#task-8-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+  - _**Реализовать функцию получения "Транзакции", которые перевесили свой "Лимит"** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-8-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
   - _**[--Доп. features--]:**_
       - [x] [п.5.1] <span id="task-3" align="justify">При получении лимитов, в SQL запросе пользуйтесь JOIN с подзапросом, агрегирующими функциями и группировками;</span>
       
-        - _**Написать `SQL запрос`** [(описание Кода)](#task-8-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
+        - _**Написать `SQL запрос`** [(описание Кода)](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#task-8-implement-transaction) [(Git commit)](ааааааааааааааааааааааа)_
           > для получения **_"Транзакция"_**, которые перевесили свой **_"Лимит"_**
 
 
@@ -950,7 +950,7 @@
 
   5. <details>
     
-      <summary><b>GET</b> -> [<b>Java code</b>] <a href="#task-1">Для получение <i>"Транзакций"</i> превысивших <i>"Лимит"</i></a> 
+      <summary><b>GET</b> -> [<b>Java code</b>] <a href="#task-6">Для получение <i>"Транзакций"</i> превысивших <i>"Лимит"</i></a> 
         (с указанием лимита, который был превышен)
       </summary> 
       
@@ -962,7 +962,7 @@
 
         **_[Response]:_**
 
-        > Структура ответа такая же как в [`/exceeded/sql-query`](#task-1), но Java реализация логики
+        > Структура ответа такая же как для `/exceeded/sql-query`, но Java реализация логики
 
      </details>
 
