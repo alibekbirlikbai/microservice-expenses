@@ -161,7 +161,7 @@
   - <details>
     <summary><ins>Реализация Features</ins></summary>
   
-    -	<span id="task-1-implement-transaction"><b><i>1. Сохранение получаемой "Транзакций"</i></b></span>
+    -	<div id="task-1-implement-transaction"><b><i>1. Сохранение получаемой "Транзакций"</i></b></div>
   
           Для сохранения транзакции используется метод - _**save()**_
   
