@@ -1157,7 +1157,10 @@ https://github.com/alibekbirlikbai/microservice-expenses.git
 
 
 ## Stack
-- [Java](https://www.java.com/ru/)
-- [Spring Framework](https://spring.io/)
-- [PostgreSQL](https://www.postgresql.org/)
+- Java 17
+- Spring Boot
+- Spring WEB
+- Spring Data JPA
+- PostgreSQL
+- Maven
 
