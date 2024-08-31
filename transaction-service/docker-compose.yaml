@@ -7,7 +7,7 @@ services:
     ports:
       - '3307:3306'
     environment:
-      MYSQL_DATABASE: 'transaction_db'
+      MYSQL_DATABASE: 'mysql_transaction'
       MYSQL_USER: 'microservice_expenses'
       MYSQL_PASSWORD: 'test'
       MYSQL_ROOT_PASSWORD: 'test'

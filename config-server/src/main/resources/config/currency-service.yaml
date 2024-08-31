@@ -21,21 +21,17 @@ management:
 
 # config for db
 db:
-  username: postgres
-  password: 123456789
-  schema: currency_data
+  username: microservice_expenses
+  password: test
+  schema: mysql_currency
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${db.schema}
+    url: jdbc:mysql://localhost:3306/${db.schema}
     username: ${db.username}
     password: ${db.password}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.jdbc.Driver
   jpa:
-    database: POSTGRESQL
-#    show-sql: true
-    hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      platform: postgres
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    hibernate.ddl-auto: create-drop
