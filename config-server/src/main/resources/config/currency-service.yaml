@@ -30,8 +30,8 @@ spring:
     url: jdbc:mysql://localhost:3306/${db.schema}
     username: ${db.username}
     password: ${db.password}
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
-    hibernate.ddl-auto: create-drop
+    hibernate.ddl-auto: update
