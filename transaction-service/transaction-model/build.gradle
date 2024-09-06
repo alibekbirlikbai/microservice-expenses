@@ -46,7 +46,7 @@ jooq {
           }
 
           target {
-            directory = file("src/main/java/com/example/transaction/model/jooq")
+            directory = file("src/main/java/com.example.transaction.model/jooq")
           }
         }
       }
@@ -57,7 +57,7 @@ jooq {
 sourceSets {
   main {
     java {
-      srcDir 'src/main/java/com/example/transaction/model/jooq'
+      srcDir 'src/main/java/com.example.transaction.model/jooq'
     }
   }
 }
