@@ -29,4 +29,4 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
-    hibernate.ddl-auto: create-drop
+    hibernate.ddl-auto: update

@@ -15,7 +15,11 @@ subprojects {
 
   dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
+
     compileOnly("org.projectlombok:lombok:1.18.24")
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+
+    testImplementation("junit:junit:4.13.1")
+    testImplementation("org.springframework.boot:spring-boot-test:1.4.0.RELEASE")
   }
 }

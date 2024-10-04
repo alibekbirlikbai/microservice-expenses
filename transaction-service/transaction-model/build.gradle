@@ -1,0 +1,63 @@
+plugins {
+  id("nu.studer.jooq") version "8.0"
+}
+
+description = "добавлю позже"
+
+dependencies {
+  implementation("com.mysql:mysql-connector-j:8.0.31")
+  implementation("org.springframework:spring-context:6.1.12")
+  implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+
+  // jooq
+  implementation("org.jooq:jooq:3.19.11")
+  implementation("org.jooq:jooq-meta:3.19.11")
+  implementation("org.jooq:jooq-codegen:3.19.11")
+
+  jooqGenerator("com.mysql:mysql-connector-j:8.0.31")
+
+  // для конвертации Jooq pojo -> Java entity
+  implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+}
+
+jooq {
+  configurations {
+    main {
+      generationTool {
+        jdbc {
+          driver = 'com.mysql.cj.jdbc.Driver'
+          url = 'jdbc:mysql://localhost:3307/mysql_transaction?useSSL=false'
+          user = 'microservice_expenses'
+          password = 'test'
+        }
+        generator {
+          database {
+            includes = 'mysql_transaction.*'
+
+            // конвертация enums от БД -> к Java чтобы не дублировать
+            forcedTypes {
+              forcedType {
+                userType = 'com.example.transaction.model.enums.ExpenseCategory'
+                enumConverter  = true
+                includeExpression = ".*\\.expense_category"
+              }
+            }
+          }
+
+          target {
+            directory = file("src/main/java/com.example.transaction.model/jooq")
+          }
+        }
+      }
+    }
+  }
+}
+
+sourceSets {
+  main {
+    java {
+      srcDir 'src/main/java/com.example.transaction.model/jooq'
+    }
+  }
+}

@@ -1,2 +1,3 @@
-тз
 .idea
+/transaction-service/transaction-model/src/main/java/com/example/transaction/model/jooq
+/currency-service/currency-model/src/main/java/com/example/transaction/model/jooq

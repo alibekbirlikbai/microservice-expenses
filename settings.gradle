@@ -1,7 +1,14 @@
 rootProject.name = "microservice-expenses"
 
-include("service-registry")
-include("config-server")
-include("api-gateway")
-include("transaction-service")
-include("currency-service")
+// config
+//include("service-registry")
+include(":config-server")
+//include("api-gateway")
+
+// business-logic
+//include(":transaction-service:transaction")
+include(":currency-service:currency")
+
+// models
+//include(":transaction-service:transaction-model")
+include(":currency-service:currency-model")
