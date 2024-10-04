@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  currency-service:
+    extends:
+      file: currency-service/docker-compose.yaml
+      service: mysql_currency
+
+  transaction-service:
+    extends:
+      file: transaction-service/docker-compose.yaml
+      service: mysql_transaction

@@ -29,5 +29,3 @@ spring:
           uri: lb://currency-service
           predicates:
             - Path=/currency-service/api/currencies/**
-
-
