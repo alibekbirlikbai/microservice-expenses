@@ -1,13 +1,13 @@
+# Demo
+
+
+https://github.com/user-attachments/assets/dbf9b876-5af7-413d-8c36-528153aa3e35
+
+
+<br/>
+
+
 ## docs
-- [intro](#intro)
-- [code](#code)
-- [API](#api)
-
-
-
-
-
-## intro
 
 Всего 5 сервисов
 
@@ -29,7 +29,6 @@
 4. **`transaction-service`**: отвечает за прием и обработку _"Транзакций"_, и запросов от _"Клиента"_
 5. **`currency-service`**: отвечает за получение актуальных _"курсов валют"_ (обращяется к `Внешнему API`)
     > **Info:** API для  получения курсов валют [https://openexchangerates.org/api](https://docs.openexchangerates.org/reference/api-introduction)
-
 
 
 
@@ -98,6 +97,7 @@
 
 -->
 
+<br/>
 
 
 ## code
@@ -739,6 +739,7 @@
 </details>
 
 
+<br/>
 
 
 
