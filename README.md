@@ -1,69 +1,39 @@
-<h1 align="center">Тестовое задание Junior Java разработчика Solva.kz</h1>
-
-<div align="center">
-
-<p align="center">
-  <a href="https://alibekbirlikbai.github.io/projects" target="_blank"><b>Другие Проекты</b></a>
-  ·
-  <a href="https://alibekbirlikbai.github.io/resume">Мой CV</a>
-  ·
-  <a href="https://alibekbirlikbai.github.io/">Контакты</a>
-  <br>
-  <br>
-</p>
-
-<hr>
-
-</div>
-
-
-## Documentation
-- [Intro](#intro) (краткое введение)
-- [Features](#features) (пункты ТЗ / реализации)
-- [Implementation](#implementation) (описание кода)
-- [API](#api) (endpoints)
-- [Quickstart](#quickstart) (настройка запуска)
-- [Branch info](#branch-info)
-- [Stack](#stack) (технологии)
+## docs
+- [intro](#intro)
+- [code](#code)
+- [API](#api)
 
 
 
 
 
-## Intro
-<p align="justify">
-  Целью данного проекта является разработка прототипа микросервиса для анализа и обработки Транзакций Клиента в реальном времени в разных валютах (KZT, RUB и другие), с возможностью установления месячного Лимита на определенную сумму (USD), для интеграции в существующую банковскую систему
-</p>
+## intro
 
-Всего проект состоит из 5 сервисов
+Всего 5 сервисов
 
-Сервисы конфигурации:
-1. **`service-registry`**: Обеспечивает механизм регистрации и обнаружения микросервисов
-     - использует сервер **_Eureka_** (`@EnableEurekaServer` / для обнаружения сервиса `@EnableDiscoveryClient`)
+`3` сервиса конфигурации:
+1. **`service-registry`**: механизм регистрации и обнаружения сервисов
+     - сервер **_Eureka_** (`@EnableEurekaServer` / для обнаружения сервиса `@EnableDiscoveryClient`)
      - **[docs:]** [Service Registry / Discovery Pattern](https://medium.com/design-microservices-architecture-with-patterns/service-registry-pattern-75f9c4e50d09)
 
-2. **`config-server`**: Позволяет управлять конфигурациями микросервисов в одном месте
-    - использует `spring-cloud-config-server` _(maven)_
+2. **`config-server`**: управление config сервисов
+    - `spring-cloud-config-server` _(maven)_
     - **[docs:]** [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#_spring_cloud_config_server)
 
-3. **`api-gateway`**: Позволяет использовать общий порт (`port:8060`) для всех сервисов
-    - использует `spring-cloud-starter-gateway` _(maven)_
+3. **`api-gateway`**: общий порт (`port:8060`) для всех сервисов
+    - `spring-cloud-starter-gateway` _(maven)_
     - **[docs:]** [API Gateway Pattern](https://microservices.io/patterns/apigateway.html#solution)
 
-Сервисы с бизнес-логикой:
+`2` сервиса с бизнес-логикой:
 
 4. **`transaction-service`**: отвечает за прием и обработку _"Транзакций"_, и запросов от _"Клиента"_
-5. **`currency-service`**: отвечает за получение актуальных _"курсов валют"_ (обращяется к `Внешнему API`) 
-
-
-**`Внешний API`**:
-> **Info:** Это API к которому обращяется проект для  получения актуальных курсов валют
-- [https://openexchangerates.org/api](https://docs.openexchangerates.org/reference/api-introduction)
+5. **`currency-service`**: отвечает за получение актуальных _"курсов валют"_ (обращяется к `Внешнему API`)
+    > **Info:** API для  получения курсов валют [https://openexchangerates.org/api](https://docs.openexchangerates.org/reference/api-introduction)
 
 
 
 
-
+<!--- 
 
 ## Features
 Пункты из ТЗ + Алгоритм выполнения для каждого пункта:
@@ -126,11 +96,11 @@
 
 </div>
 
+-->
 
 
 
-
-## Implementation
+## code
 
 <details>
   <summary><b><code>transaction-service</code></b></summary>
@@ -1091,76 +1061,4 @@
 
 </details>
 
-
-
-
-
-
-## Quickstart
-```bash
-https://github.com/alibekbirlikbai/microservice-expenses.git
-```
-
-- <details>
-    <summary id="">Настройка <b><i>Базы Данных</i></b></summary>
-
-    - В _PostgreSQL_ создайте 2 отдельные _базы данных_: `currency_data` и `transaction_data`
-    - Для подключения к своему _PostgreSQL_ пройдите до `config-server\src\main\resources\config` внутри заходите в `currency-service.yaml`/`transaction-service.yaml` и заменяете значения для `username`, `password`
-
-      ![image](https://github.com/alibekbirlikbai/microservice-expenses/assets/87764579/96964224-98be-4bf7-aaf1-8307ceb00f61)
-      ![image](https://github.com/alibekbirlikbai/microservice-expenses/assets/87764579/35c7fd79-dc6f-47f1-a706-19ac236383d6)
-
-    - <details>
-          <summary><b><i>(Опционально)</i></b></summary>
-
-      Для **`currency-service`**, параметр `hibernate.ddl-auto: update`
-      >при желании его можно заменить на другой, но тогда после каждого запуска микросервиса хранящиеся данные о курсах валют в бд будут потеряны (придется занова обращаться к '[`Внешнему API`](https://docs.openexchangerates.org/reference/api-introduction)')
-
-      ![image](https://github.com/alibekbirlikbai/microservice-expenses/assets/87764579/2b5fcd73-04e2-42e3-8572-bd55872b930c)
-
-      </details>
-
-  </details>
-
-
-- <details>
-    <summary>Настройка <b><i>Сервера</i></b></summary>
-
-    - Как только настроите бд, запустите по порядку каждый из сервисов:
-        - **`service-registry`** (1)
-        - **`config-server`** (2)
-        - **`api-gateway`** (3)
-        - **`currency-service`** (4)
-        - **`transaction-service`** (5)
-
-        После запуска проект должен выглядеть так:  
-        ![Без имени](https://github.com/alibekbirlikbai/microservice-expenses/assets/87764579/2be73aeb-a802-4aee-bb7a-38c673d6445a)
-
-
-    - После чего можете запускать **_API-запросы_** (детали смотрите в разделе [API](#api)
-
-  </details>
-
-
-
-
-
-
-
-## Branch info
-- _**main**_ - _Production_ ветка, стабильная (завершенная) версия проекта;
-- _**dev**_ - _Development_ ветка, интеграция всех [_features_](https://github.com/alibekbirlikbai/microservice-expenses?tab=readme-ov-file#features);
-
-
-
-
-
-
-## Stack
-- Java 17
-- Spring Boot
-- Spring WEB
-- Spring Data JPA
-- PostgreSQL
-- Maven
 
